@@ -9,7 +9,7 @@ https://user-images.githubusercontent.com/34736356/193305337-c5a48c83-2d31-4a46-
   - [x] if
   - [x] lambda
 - Builtin functions
-  - [x] Arithmestic operators for integers
+  - [x] Arithmetic operators for integers
 
 ## Values
 
@@ -34,7 +34,7 @@ Branch expression, if `predicate_expression` is not `#f`, then evaluate and retu
 
 Lambda expresion, define an anonymous function with the parameters named `p1`, `p2`, ..., `pn` (can be empty, i.e., `()`), and the function body.
 
-### Arithmestic
+### Arithmetic
 
 The operands must be integers.
 
