@@ -1,6 +1,6 @@
 from functools import wraps, reduce
 from typing import Callable
-from .functions import function, lazyFunction
+from .functions import function
 from .values import Int, Value
 
 
@@ -14,28 +14,27 @@ def arithmetic(func: Callable):
     return wrapper
 
 
-@function
+@function()
 @arithmetic
 def add(*args: int):
     assert len(args) >= 2, "The length of operands must be larger than 2."
     return sum(args)
 
 
-@function
+@function(count=2)
 @arithmetic
 def subtract(*args: int):
-    assert len(args) == 2, "The length of operands must be larger than 2."
     return args[0] - args[1]
 
 
-@function
+@function()
 @arithmetic
 def multiply(*args: int):
     assert len(args) >= 2, "The length of operands must be larger than 2."
     return reduce(lambda x, y: x * y, args)
 
 
-@function
+@function(count=2)
 @arithmetic
 def divide(*args: int):
     assert len(args) == 2, "The length of operands must be 2."
@@ -43,7 +42,7 @@ def divide(*args: int):
     return args[0] // args[1]
 
 
-@function
+@function(count=2)
 @arithmetic
 def power(*args: int):
     assert len(args) == 2, "The length of operands must be 2."

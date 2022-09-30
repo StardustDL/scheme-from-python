@@ -3,22 +3,58 @@
 An experimental scheme interpreter in Python.
 
 - Scheme core
-  - [ ] define
-  - [ ] lambda
+  - [x] define
+  - [x] if
+  - [x] lambda
 - Builtin functions
   - [x] Arithmestic operators for integers
 
+## Values
+
+- Boolean: `#t` true, `#f` false
+- Integer: `0`, `1`, `2`, ...
+- Symbol: `a`, `b`, `c`, `+`, `-`, ...
+- Functions: `(lambda (x) (+ x 1))`, ...
+
 ## Functions
+
+### Core
+
+**`(define symbol_name value_expression)`**
+
+Define a symbol with exact value, and return the symbol, `def` for a short alternative.
+
+**`(if predicate_expression true_expression false_expresion)`**
+
+Branch expression, if `predicate_expression` is not `#f`, then evaluate and return the value of `true_expression`, otherwise evaluate and return the value of `false_expression`.
+
+**`(lambda (p1 p2 ... pn) body_expression`**
+
+Lambda expresion, define an anonymous function with the parameters named `p1`, `p2`, ..., `pn` (can be empty, i.e., `()`), and the function body.
 
 ### Arithmestic
 
 The operands must be integers.
 
-- `(+ v1 v2 ... vn)` $=\sum_{i=1}^n v_i$
-- `(- v1 v2)` $=v_1 - v_2$
-- `(* v1 v2 ... vn)` $=\prod_{i=1}^n v_i$
-- `(/ v1 v2)` $=\lfloor v_1 / v_2 \rfloor$
-- `(^ v1 v2)` $=v_1^{v_2}$
+**`(+ v1 v2 ... vn)`**
+
+$=\sum_{i=1}^n v_i$
+
+**`(- v1 v2)`**
+
+$=v_1 - v_2$
+
+**`(* v1 v2 ... vn)`**
+
+$=\prod_{i=1}^n v_i$
+
+**`(/ v1 v2)`**
+
+$=\lfloor v_1 / v_2 \rfloor$
+
+**`(^ v1 v2)`**
+
+$=v_1^{v_2}$
 
 ## Install
 
@@ -45,8 +81,4 @@ python -m sfpy
 python -m sfpy -f your_scheme_file
 
 python -m sfpy -e "your scheme expression"
-
-# an arithmestic demo
-python -m sfpy -e "(+ (* 1 1) (- 3 2) (^ 2 0) (/ 4 4))"
-python -m sfpy -f ../demo/arithmestic.scm
 ```

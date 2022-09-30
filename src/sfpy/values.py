@@ -65,6 +65,9 @@ class Symbol(Value):
     def __repr__(self) -> str:
         return self.raw
 
+    def valid(self):
+        return len(self.raw) > 0 and any(not c.isdigit() for c in self.raw)
+
 
 TRUE = Bool(True)
 FALSE = Bool(False)

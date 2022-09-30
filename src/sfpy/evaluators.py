@@ -5,9 +5,32 @@ from .values import Int, Symbol, Value, EMPTY, TRUE as VALUE_TRUE, FALSE as VALU
 from .builtins import builtinSymbols
 
 
+CORE_DEFINE = {"define", "def"}
+CORE_LAMBDA = {"lambda", "lam"}
+CORE_BRANCH = {"if"}
+
+CORE_SYMBOLS = CORE_DEFINE | CORE_LAMBDA | CORE_BRANCH
+
+
 class Evaluator:
-    def __init__(self) -> None:
-        self.symbols: dict[str, Value] = {**builtinSymbols}
+    def __init__(self, parent: "Evaluator | None" = None) -> None:
+        self.parent = parent
+        self.symbols: dict[str, Value] = {}
+
+        if self.parent is None:
+            from .core import define, branch, lambdafunc
+            cdefine = define(self)
+            cbranch = branch(self)
+            clambda = lambdafunc(self)
+            self.symbols.update({
+                **builtinSymbols,
+                **{name: cdefine for name in CORE_DEFINE},
+                **{name: cbranch for name in CORE_BRANCH},
+                **{name: clambda for name in CORE_LAMBDA},
+            })
+
+    def sub(self) -> "Evaluator":
+        return Evaluator(self)
 
     def evaluate(self, program: Program) -> Value:
         if not program:
@@ -17,13 +40,21 @@ class Evaluator:
         else:
             return self.atomic(program)
 
-    def symbol(self, symbol: str | Symbol) -> Value:
+    def symbol(self, symbol: str | Symbol, value=None) -> Value:
         symbol = str(symbol)
-        assert symbol in self.symbols, f"Undefined symbol: '{symbol}'"
-        return self.symbols[symbol]
+        if value == None:
+            if self.parent == None:
+                assert symbol in self.symbols, f"Undefined symbol: '{symbol}'"
+            elif symbol not in self.symbols:
+                return self.parent.symbol(symbol)
+            return self.symbols[symbol]
+        else:
+            assert symbol not in CORE_SYMBOLS, f"Core symbol '{symbol}' cannot be changed."
+            self.symbols[symbol] = value
 
     def atomic(self, program: Program) -> Value:
-        assert len(program) == 1, f"Cannot directly evaluate a non-single program: {program}"
+        assert len(
+            program) == 1, f"Cannot directly evaluate a non-single program: {program}"
 
         token = program[0]
         assert token not in {LEFT, RIGHT}, "Cannot evaluate a parenthese."
