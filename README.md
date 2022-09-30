@@ -2,6 +2,8 @@
 
 An experimental scheme interpreter in Python.
 
+https://user-images.githubusercontent.com/34736356/193305337-c5a48c83-2d31-4a46-9ff8-370619967530.mov
+
 - Scheme core
   - [x] define
   - [x] if
