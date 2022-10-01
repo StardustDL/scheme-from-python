@@ -10,6 +10,8 @@ https://user-images.githubusercontent.com/34736356/193305337-c5a48c83-2d31-4a46-
   - [x] lambda
 - Builtin functions
   - [x] Arithmetic operators for integers
+- Interoperation
+  - [x] Auto signature inferring from Python to Scheme
 
 ## Values
 

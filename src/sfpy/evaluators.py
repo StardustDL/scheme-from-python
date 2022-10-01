@@ -2,7 +2,7 @@ from sfpy.functions import Function
 from .programs import Program
 from .tokens import TRUE as TOKEN_TRUE, FALSE as TOKEN_FALSE, LEFT, RIGHT
 from .values import Int, Symbol, Value, EMPTY, TRUE as VALUE_TRUE, FALSE as VALUE_FALSE
-from .builtins import builtinSymbols
+from .builtins import builtins
 
 
 CORE_DEFINE = {"define", "def"}
@@ -23,7 +23,7 @@ class Evaluator:
             cbranch = branch(self)
             clambda = lambdafunc(self)
             self.symbols.update({
-                **builtinSymbols,
+                **builtins,
                 **{name: cdefine for name in CORE_DEFINE},
                 **{name: cbranch for name in CORE_BRANCH},
                 **{name: clambda for name in CORE_LAMBDA},
@@ -87,4 +87,4 @@ class Evaluator:
         assert isinstance(
             operator, Function), f"Operator must be a function: {operator}"
 
-        return operator(*[o if operator.lazy else self.evaluate(o) for o in operands])
+        return operator(*[o if operator.signature.lazy else self.evaluate(o) for o in operands])

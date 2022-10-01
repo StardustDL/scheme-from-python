@@ -6,9 +6,8 @@ from .values import Symbol
 
 
 def define(evaluator: Evaluator):
-    @function(count=2, lazy=True)
-    def context(*args: Program):
-        name, value = args
+    @function
+    def context(name: Program, value: Program):
         assert len(name) == 1, "The symbol name must be a single string."
 
         symbol = Symbol(name[0])
@@ -22,18 +21,16 @@ def define(evaluator: Evaluator):
 
 
 def branch(evaluator: Evaluator):
-    @function(count=3, lazy=True)
-    def context(*args: Program):
-        predicate, exprTrue, exprFalse = args
+    @function
+    def context(predicate: Program, exprTrue: Program, exprFalse: Program):
         return evaluator.evaluate(exprTrue if evaluator.evaluate(predicate) else exprFalse)
 
     return context
 
 
 def lambdafunc(evaluator: Evaluator):
-    @function(count=2, lazy=True)
-    def context(*args: Program):
-        parameters, body = args
+    @function
+    def context(parameters: Program, body: Program):
         assert len(parameters) > 0 and parameters.valid(
         ) and parameters[0] == LEFT, f"Parameter list {parameters} is invalid."
 
@@ -47,12 +44,15 @@ def lambdafunc(evaluator: Evaluator):
         assert all(s.valid()
                    for s in parameters), f"Parameter list {parameters} is invalid."
 
-        @function(count=len(parameters), repr=f"( lambda ( {' '.join(p.raw for p in parameters)} ) {' '.join(body)} )")
+        @function
         def raw(*args):
             sub = evaluator.sub()
             for parameter, argument in zip(parameters, args):
                 sub.symbol(parameter, argument)
             return sub.evaluate(body)
+
+        raw.repr = f"( lambda ( {' '.join(p.raw for p in parameters)} ) {' '.join(body)} )"
+        raw.signature.parameters = [None] * len(parameters)
 
         return raw
 

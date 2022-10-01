@@ -68,3 +68,6 @@ jobs:
         run: |
           python -m sfpy -e "(+ (* 1 1) (- 3 2) (^ 2 0) (/ 4 4))"
           python -m sfpy -f ./demo/arithmetic.scm
+      - name: Lambda
+        run: |
+          python -m sfpy -f ./demo/lambda.scm
