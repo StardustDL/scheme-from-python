@@ -86,7 +86,7 @@ class String(Value):
 
 
 class Object(Value, ABC):
-    """Wrapper for unsupported Python values, always flatten when passing arguments."""
+    """Wrapper for unsupported Python values."""
     pass
 
 

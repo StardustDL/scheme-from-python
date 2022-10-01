@@ -1,4 +1,5 @@
 import builtins
+from functools import wraps
 import importlib
 from typing import TYPE_CHECKING, Callable
 from .functions import Function, function
@@ -25,6 +26,13 @@ def resolvePythonAttribute(name: str):
         result = cur
     except:
         result = None
+
+    if isinstance(result, Callable):
+        @wraps(result)
+        def wrapper(*args):
+            return result(*[arg.raw if isinstance(arg, Value) else arg for arg in args])
+
+        return Value.ensure(wrapper)
 
     return Value.ensure(result) if result is not None else None
 

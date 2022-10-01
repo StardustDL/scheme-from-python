@@ -42,7 +42,7 @@ class Signature:
                 assert isinstance(
                     arg, target), f"The variadic {i}-th argument must of type {target}, but got {type(arg)}."
                 variadic.append(
-                    arg.raw if flat or isinstance(arg, Object) else arg)
+                    arg.raw if flat else arg)
 
             args = args[:len(parameters)]
         else:
@@ -54,7 +54,7 @@ class Signature:
             target, flat = parameter
             assert isinstance(
                 arg, target), f"The {i}-th argument must of type {target}, but got {type(arg)}."
-            result.append(arg.raw if flat or isinstance(arg, Object) else arg)
+            result.append(arg.raw if flat else arg)
 
         return result + variadic
 
