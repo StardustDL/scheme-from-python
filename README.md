@@ -30,7 +30,7 @@ https://user-images.githubusercontent.com/34736356/193305337-c5a48c83-2d31-4a46-
 
 ## Python Interoperation
 
-Most static Python functions can be accessed in sfpy, by the qualified name `module:`, `module:attribue` or `module:class.attribue`, e.g., `os:getcwd`, `os.path:split`.
+Most static Python functions can be accessed in sfpy, by the qualified name `:builtinAttribute`, `module:`, `module:attribue` or `module:class.attribue`, e.g., `:dir`, `os:getcwd`, `os.path:split`.
 
 sfpy tries to wrap the Python function to adapt to the scheme environment. Have fun to try this experimental feature!
 
@@ -41,7 +41,7 @@ sfpy tries to wrap the Python function to adapt to the scheme environment. Have 
 (lambda () (...))
 > (os:getcwd)
 D:\scheme-from-python\src
-> (dir math:)
+> (:dir math:)
 Object(['__doc__', '__loader__', '__name__', '__package__', '__spec__', 'acos', 'acosh', 'asin', 'asinh', 'atan', 'atan2', 'atanh', 'ceil', 'comb', 'copysign', 'cos', 'cosh', 'degrees', 'dist', 'e', 'erf', 'erfc', 'exp', 'expm1', 'fabs', 'factorial', 'floor', 'fmod', 'frexp', 'fsum', 'gamma', 'gcd', 'hypot', 'inf', 'isclose', 'isfinite', 'isinf', 'isnan', 'isqrt', 'lcm', 'ldexp', 'lgamma', 'log', 'log10', 'log1p', 'log2', 'modf', 'nan', 'nextafter', 'perm', 'pi', 'pow', 'prod', 'radians', 'remainder', 'sin', 'sinh', 'sqrt', 'tan', 'tanh', 'tau', 'trunc', 'ulp'])
 ```
 

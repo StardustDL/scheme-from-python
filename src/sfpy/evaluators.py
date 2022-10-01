@@ -8,22 +8,20 @@ from .values import Complex, Float, Int, String, Value, EMPTY, TRUE as VALUE_TRU
 
 
 def resolvePythonAttribute(name: str):
-    result = None
-
     if ":" not in name:
-        result = getattr(builtins, name, None)
-    else:
-        module, name = name.split(':', 1)
-        try:
-            module = importlib.import_module(module)
-            names = name.split(".")
-            cur = module
-            for n in names:
-                if n:
-                    cur = getattr(cur, n)
-            result = cur
-        except:
-            result = None
+        return None
+
+    module, name = name.split(':', 1)
+    try:
+        module = importlib.import_module(module) if module else builtins
+        names = name.split(".")
+        cur = module
+        for n in names:
+            if n:
+                cur = getattr(cur, n)
+        result = cur
+    except:
+        result = None
 
     return Value.ensure(result) if result is not None else None
 
@@ -57,7 +55,6 @@ class Evaluator:
         symbol = str(symbol)
         if value == None:
             if self.parent == None:
-
                 if symbol not in self.symbols:  # try resolve python function
                     pyAttr = resolvePythonAttribute(symbol)
                     if pyAttr is not None:
@@ -84,6 +81,8 @@ class Evaluator:
 
         for parse, target in [(int, Int), (float, Float), (complex, Complex)]:
             try:
+                if token == "j":  # ignore single 'j' complex, use 0+j
+                    continue
                 val = parse(token)
                 return target(val)
             except:

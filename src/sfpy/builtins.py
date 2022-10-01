@@ -50,7 +50,7 @@ def lambdafunc(parameters: Program, body: Program, *, eval: Evaluator):
         parameters), "Parameter names contain conflicts."
 
     parameters: list[String] = [String(p[0]) for p in parameters]
-    assert all(s.valid()
+    assert all(s.isSymbol()
                for s in parameters), f"Parameter list {parameters} is invalid."
 
     @function
