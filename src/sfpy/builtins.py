@@ -44,3 +44,39 @@ def divide(v1: int, v2: int):
 @function
 def power(v1: int, v2: int):
     return v1 ** v2
+
+
+@builtins.name("<")
+@function
+def less(v1: int, v2: int):
+    return v1 < v2
+
+
+@builtins.name("<=")
+@function
+def lessEq(v1: int, v2: int):
+    return v1 <= v2
+
+
+@builtins.name(">")
+@function
+def greater(v1: int, v2: int):
+    return v1 > v2
+
+
+@builtins.name(">=")
+@function
+def greaterEq(v1: int, v2: int):
+    return v1 >= v2
+
+
+@builtins.name("=")
+@function
+def equal(v1: int, v2: int):
+    return v1 == v2
+
+
+@builtins.name("!=")
+@function
+def notEq(v1: int, v2: int):
+    return v1 != v2

@@ -7,9 +7,10 @@ https://user-images.githubusercontent.com/34736356/193305337-c5a48c83-2d31-4a46-
 - Scheme core
   - [x] define
   - [x] if
-  - [x] lambda
+  - [x] lambda (with closures)
 - Builtin functions
   - [x] Arithmetic operators for integers
+  - [x] Comparing operators for numbers
 - Interoperation
   - [x] Auto signature inferring from Python to Scheme
 
@@ -34,7 +35,7 @@ Branch expression, if `predicate_expression` is not `#f`, then evaluate and retu
 
 **`(lambda (p1 p2 ... pn) body_expression`**
 
-Lambda expresion, define an anonymous function with the parameters named `p1`, `p2`, ..., `pn` (can be empty, i.e., `()`), and the function body.
+Lambda expresion, define an anonymous function (closure) with the parameters named `p1`, `p2`, ..., `pn` (can be empty, i.e., `()`), and the function body, `lam` for a short alternative.
 
 ### Arithmetic
 
@@ -42,23 +43,49 @@ The operands must be integers.
 
 **`(+ v1 v2 ... vn)`**
 
-$=\sum_{i=1}^n v_i$
+$$=\sum_{i=1}^n v_i$$
 
 **`(- v1 v2)`**
 
-$=v_1 - v_2$
+$$=v_1 - v_2$$
 
 **`(* v1 v2 ... vn)`**
 
-$=\prod_{i=1}^n v_i$
+$$=\prod_{i=1}^n v_i$$
 
 **`(/ v1 v2)`**
 
-$=\lfloor v_1 / v_2 \rfloor$
+$$=\lfloor v_1 / v_2 \rfloor$$
 
 **`(^ v1 v2)`**
 
-$=v_1^{v_2}$
+$$=v_1^{v_2}$$
+
+### Comparing
+
+**`(< v1 v2)`**
+
+$$=\textbf{boolean}(v_1 < v_2)$$
+
+**`(<= v1 v2)`**
+
+$$=\textbf{boolean}(v_1 \le v_2)$$
+
+**`(> v1 v2)`**
+
+$$=\textbf{boolean}(v_1 > v_2)$$
+
+**`(>= v1 v2)`**
+
+$$=\textbf{boolean}(v_1 \ge v_2)$$
+
+**`(= v1 v2)`**
+
+$$=\textbf{boolean}(v_1 = v_2)$$
+
+**`(!= v1 v2)`**
+
+$$=\textbf{boolean}(v_1 \ne v_2)$$
 
 ## Install
 
