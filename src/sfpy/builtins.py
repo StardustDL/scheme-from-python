@@ -4,7 +4,7 @@ from typing import Callable
 from .evaluators import Evaluator
 from .programs import Program
 from .functions import Function, function
-from .values import Int, Value, Symbol
+from .values import EMPTY, Int, Number, Value, Symbol
 from .tokens import LEFT
 
 builtins = {}
@@ -64,49 +64,71 @@ def lambdafunc(parameters: Program, body: Program, *, eval: Evaluator):
 
 
 @builtin("+")
-def add(v1: int, v2: int, *args: int):
-    return sum([v1, v2, *args])
+def add(v1: Number, v2: Number, *args: Number):
+    return sum(v.raw for v in [v1, v2, *args])
 
 
 @builtin("-")
-def subtract(v1: int, v2: int):
-    return v1 - v2
+def subtract(v1: Number, v2: Number):
+    return v1.raw - v2.raw
 
 
 @builtin("*")
-def multiply(v1: int, v2: int, *args: int):
-    return reduce(lambda x, y: x * y, [v1, v2, *args])
+def multiply(v1: Number, v2: Number, *args: Number):
+    return reduce(lambda x, y: x * y, (v.raw for v in [v1, v2, *args]))
+
+
+@builtin("//")
+def divideInt(v1: Number, v2: Number):
+    assert v2.raw != 0, "The divisor cannot be zero."
+    return v1.raw // v2.raw
+
+
+@builtin("%")
+def divideInt(v1: Number, v2: Number):
+    assert v2.raw != 0, "The divisor cannot be zero."
+    return v1.raw % v2.raw
 
 
 @builtin("/")
-def divide(v1: int, v2: int):
-    assert v2 != 0, "The divisor cannot be zero."
-    return v1 // v2
+def divide(v1: Number, v2: Number):
+    assert v2.raw != 0, "The divisor cannot be zero."
+    return v1.raw / v2.raw
 
 
 @builtin("^")
-def power(v1: int, v2: int):
-    return v1 ** v2
+def power(v1: Number, v2: Number):
+    return v1.raw ** v2.raw
+
+
+@builtin("max")
+def maxNum(v1: Number, v2: Number, *args: Number):
+    return max(v.raw for v in [v1, v2, *args])
+
+
+@builtin("min")
+def minNum(v1: Number, v2: Number, *args: Number):
+    return min(v.raw for v in [v1, v2, *args])
 
 
 @builtin("<")
-def less(v1: int, v2: int):
-    return v1 < v2
+def less(v1: Number, v2: Number):
+    return v1.raw < v2.raw
 
 
 @builtin("<=")
-def lessEq(v1: int, v2: int):
-    return v1 <= v2
+def lessEq(v1: Number, v2: Number):
+    return v1.raw <= v2.raw
 
 
 @builtin(">")
-def greater(v1: int, v2: int):
-    return v1 > v2
+def greater(v1: Number, v2: Number):
+    return v1.raw > v2.raw
 
 
 @builtin(">=")
-def greaterEq(v1: int, v2: int):
-    return v1 >= v2
+def greaterEq(v1: Number, v2: Number):
+    return v1.raw >= v2.raw
 
 
 @builtin("=")
@@ -132,3 +154,9 @@ def boolAnd(b1: bool, b2: bool, *args: bool):
 @builtin("or")
 def boolOr(b1: bool, b2: bool, *args: bool):
     return any([b1, b2, *args])
+
+
+@builtin("print")
+def printFunc(v: Value):
+    print(v)
+    return EMPTY

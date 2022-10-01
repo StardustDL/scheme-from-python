@@ -13,7 +13,7 @@ https://user-images.githubusercontent.com/34736356/193305337-c5a48c83-2d31-4a46-
   - [x] lambda (with closures)
 - Builtin functions
   - [x] Boolean operators
-  - [x] Integer arithmetic operators
+  - [x] Arithmetic operators (integer, float, complex)
   - [x] Comparing operators
 - Interoperation
   - [x] Auto signature inferring from Python to Scheme
@@ -30,9 +30,12 @@ https://user-images.githubusercontent.com/34736356/193305337-c5a48c83-2d31-4a46-
 ## Values
 
 - Boolean: `#t` true, `#f` false
-- Integer: `0`, `1`, `2`, ...
+- Integer: `0`, `-1`, `2`, ...
+- Float: `0.1`, `1.5`, ...
+- Complex: `1+2j`, `3+4j`, ...
 - Symbol: `a`, `b`, `c`, `+`, `-`, ...
-- Functions: `(lambda (x) (+ x 1))`, ...
+- Function: `(lambda (x) (+ x 1))`, ...
+- Empty: `<empty>` only as return value
 
 ## Builtins
 
@@ -89,13 +92,29 @@ $$=v_1 - v_2$$
 
 $$=\prod_{i=1}^n v_i$$
 
-**`(/ v1 v2)`**
+**`(// v1 v2)`**
 
 $$=\lfloor v_1 / v_2 \rfloor$$
+
+**`(/ v1 v2)`**
+
+$$=v_1 / v_2$$
+
+**`(% v1 v2)`**
+
+$$=v_1 \% v_2$$
 
 **`(^ v1 v2)`**
 
 $$=v_1^{v_2}$$
+
+**`(max v1 v2 ... vn)`**
+
+$$=\max_{i=1}^n v_i$$
+
+**`(min v1 v2 ... vn)`**
+
+$$=\min_{i=1}^n v_i$$
 
 ### Comparing
 
@@ -122,6 +141,12 @@ $$=\textbf{boolean}(v_1 = v_2)$$
 **`(!= v1 v2)`**
 
 $$=\textbf{boolean}(v_1 \ne v_2)$$
+
+### Input / Output
+
+**`(print v)`**
+
+Print the value and return empty.
 
 ## Install
 

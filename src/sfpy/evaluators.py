@@ -1,7 +1,26 @@
-from sfpy.functions import Function
+import builtins
+import importlib
+from typing import Callable
+from .functions import Function, function
 from .programs import Program
 from .tokens import TRUE as TOKEN_TRUE, FALSE as TOKEN_FALSE, LEFT, RIGHT
-from .values import Int, Symbol, Value, EMPTY, TRUE as VALUE_TRUE, FALSE as VALUE_FALSE
+from .values import Complex, Float, Int, Symbol, Value, EMPTY, TRUE as VALUE_TRUE, FALSE as VALUE_FALSE
+
+
+def resolvePythonFunction(name: str):
+    result = None
+
+    if ":" not in name:
+        result = getattr(builtins, name, None)
+    else:
+        module, name = name.split(':', 1)
+        try:
+            module = importlib.import_module(module)
+            result = getattr(module, name)
+        except:
+            result = None
+
+    return result if isinstance(result, Callable) else None
 
 
 class Evaluator:
@@ -33,6 +52,12 @@ class Evaluator:
         symbol = str(symbol)
         if value == None:
             if self.parent == None:
+
+                if symbol not in self.symbols:  # try resolve python function
+                    pythonFunc = resolvePythonFunction(symbol)
+                    if pythonFunc is not None:
+                        return function(pythonFunc)
+
                 assert symbol in self.symbols, f"Undefined symbol: '{symbol}'"
             elif symbol not in self.symbols:
                 return self.parent.symbol(symbol)
@@ -52,11 +77,12 @@ class Evaluator:
         if token == TOKEN_FALSE:
             return VALUE_FALSE
 
-        try:
-            intval = int(token)
-            return Int(intval)
-        except:
-            pass
+        for parse, target in [(int, Int), (float, Float), (complex, Complex)]:
+            try:
+                val = parse(token)
+                return target(val)
+            except:
+                pass
 
         return self.symbol(token)
 

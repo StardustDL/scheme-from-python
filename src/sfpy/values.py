@@ -1,4 +1,5 @@
 from abc import ABC
+import inspect
 from types import NoneType
 from typing import Callable
 
@@ -22,15 +23,12 @@ class Value(ABC):
     def ensure(cls, raw) -> "Value":
         if isinstance(raw, Value):
             return raw
-        if isinstance(raw, bool):
-            return Bool(raw)
-        if isinstance(raw, int):
-            return Int(raw)
-        if isinstance(raw, Callable):
-            from .functions import Function
-            return Function(raw)
-        if raw == None:
-            return Empty(raw)
+        from .functions import Function
+        for item in list(globals().values()) + [Function]:
+            if item == Value or not inspect.isclass(item) or not issubclass(item, Value) or inspect.isabstract(item):
+                continue
+            if isinstance(raw, item.__rawType__):
+                return item(raw)
         raise Exception(f"Unsupport value type: {type(raw)}.")
 
 
@@ -45,11 +43,21 @@ class Bool(Value):
         return isinstance(other, Bool) and other.raw == self.raw
 
 
-class Int(Value):
-    __rawType__ = int
-
+class Number(Value, ABC):
     def __repr__(self) -> str:
         return repr(self.raw)
+
+
+class Int(Number):
+    __rawType__ = int
+
+
+class Float(Number):
+    __rawType__ = float
+
+
+class Complex(Number):
+    __rawType__ = complex
 
 
 class Empty(Value):
@@ -67,6 +75,11 @@ class Symbol(Value):
 
     def valid(self):
         return len(self.raw) > 0 and any(not c.isdigit() for c in self.raw)
+
+
+class Object(Value):
+    def __repr__(self) -> str:
+        return repr(self.raw)
 
 
 TRUE = Bool(True)
