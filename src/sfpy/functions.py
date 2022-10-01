@@ -98,7 +98,7 @@ def inferSignature(func: Callable) -> Signature:
         return Signature()
 
     parameters = [p for p in sign.parameters.values() if p.kind in {
-        Parameter.POSITIONAL_ONLY, Parameter.POSITIONAL_OR_KEYWORD, Parameter.VAR_POSITIONAL}]
+        Parameter.POSITIONAL_ONLY, Parameter.POSITIONAL_OR_KEYWORD, Parameter.VAR_POSITIONAL} and p.default == Parameter.empty]
 
     result = Signature(parameters=[],
                        lazy=all(p.annotation == Program for p in parameters) and len(
