@@ -2,14 +2,6 @@ from sfpy.functions import Function
 from .programs import Program
 from .tokens import TRUE as TOKEN_TRUE, FALSE as TOKEN_FALSE, LEFT, RIGHT
 from .values import Int, Symbol, Value, EMPTY, TRUE as VALUE_TRUE, FALSE as VALUE_FALSE
-from .builtins import builtins
-
-
-CORE_DEFINE = {"define", "def"}
-CORE_LAMBDA = {"lambda", "lam"}
-CORE_BRANCH = {"if"}
-
-CORE_SYMBOLS = CORE_DEFINE | CORE_LAMBDA | CORE_BRANCH
 
 
 class Evaluator:
@@ -18,27 +10,13 @@ class Evaluator:
         self.symbols: dict[str, Value] = {}
 
         if self.parent is None:
+            from .builtins import builtins
             self.symbols.update(builtins)
-
-        from .core import define, branch, lambdafunc
-        cdefine = define(self)
-        cbranch = branch(self)
-        clambda = lambdafunc(self)
-        self.symbols.update({
-            **builtins,
-            **{name: cdefine for name in CORE_DEFINE},
-            **{name: cbranch for name in CORE_BRANCH},
-            **{name: clambda for name in CORE_LAMBDA},
-        })
 
     def sub(self, symbols: dict[str, Value] | None = None) -> "Evaluator":
         sub = Evaluator(self)
-        from .core import lambdafunc
-        clambda = lambdafunc(sub)
-        sub.symbols.update({
-            **(symbols or {}),
-            **{name: clambda for name in CORE_LAMBDA},
-        })
+        if symbols:
+            sub.symbols.update(symbols)
         return sub
 
     def evaluate(self, program: Program) -> Value:
@@ -58,7 +36,6 @@ class Evaluator:
                 return self.parent.symbol(symbol)
             return self.symbols[symbol]
         else:
-            assert symbol not in CORE_SYMBOLS, f"Core symbol '{symbol}' cannot be changed."
             self.symbols[symbol] = value
 
     def atomic(self, program: Program) -> Value:
@@ -91,4 +68,4 @@ class Evaluator:
         assert isinstance(
             operator, Function), f"Operator must be a function: {operator}"
 
-        return operator(*[o if operator.signature.lazy else self.evaluate(o) for o in operands])
+        return operator(*[o if operator.signature.lazy else self.evaluate(o) for o in operands], eval=self)

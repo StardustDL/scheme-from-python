@@ -17,6 +17,8 @@ https://user-images.githubusercontent.com/34736356/193305337-c5a48c83-2d31-4a46-
   - [x] Comparing operators
 - Interoperation
   - [x] Auto signature inferring from Python to Scheme
+  - [x] Lazy or non-lazy functions
+  - [x] Capturing the evaluation context (symbol table).
 
 ## Values
 
@@ -25,7 +27,7 @@ https://user-images.githubusercontent.com/34736356/193305337-c5a48c83-2d31-4a46-
 - Symbol: `a`, `b`, `c`, `+`, `-`, ...
 - Functions: `(lambda (x) (+ x 1))`, ...
 
-## Functions
+## Builtins
 
 ### Core
 
@@ -40,6 +42,15 @@ Branch expression, if `predicate_expression` is not `#f`, then evaluate and retu
 **`(lambda (p1 p2 ... pn) body_expression`**
 
 Lambda expresion, define an anonymous function (closure) with the parameters named `p1`, `p2`, ..., `pn` (can be empty, i.e., `()`), and the function body, `lam` for a short alternative.
+
+The lambda function creates a sub-symbol-table, so `define` in a lambda function can only write current symbols, and cannot write upstream symbols (can hidden them by define symbols in the same name). Here is an example code snippet.
+
+```scheme
+>>> ((lambda () (define x 1)))
+x
+>>> x
+Undefined symbol: x
+```
 
 ### Boolean
 

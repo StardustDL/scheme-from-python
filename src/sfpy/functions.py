@@ -1,12 +1,18 @@
 from dataclasses import dataclass, field
 from functools import wraps
-from typing import Callable, Type
+from typing import Callable, Type, TYPE_CHECKING
 from inspect import signature, Parameter
 
-from sfpy.tokens import LEFT
+from .tokens import LEFT
 
 from .programs import Program
 from .values import Bool, Int, Symbol, Value
+
+if TYPE_CHECKING:
+    from .evaluators import Evaluator
+
+
+EVAL_PARAMETER = "eval"
 
 
 @dataclass
@@ -14,6 +20,7 @@ class Signature:
     parameters: list[tuple[Type[Value], bool] | None] | None = None
     variadic: tuple[Type[Value], bool] | None = None
     lazy: bool = False
+    eval: bool = False
 
     def adapt(self, *args: Value) -> list:
         if self.parameters is None:
@@ -62,8 +69,10 @@ class Function(Value):
         self.signature = signature or Signature()
         self.repr = repr
 
-    def __call__(self, *args):
-        return Value.ensure(self.raw(*self.signature.adapt(*args)))
+    def __call__(self, *args, eval: "Evaluator"):
+        return Value.ensure(
+            self.raw(*self.signature.adapt(*args),
+                     **({EVAL_PARAMETER: eval} if self.signature.lazy and self.signature.eval else {})))
 
     def __repr__(self) -> str:
         return self.repr if self.repr is not None else super().__repr__()
@@ -71,13 +80,12 @@ class Function(Value):
 
 def inferSignature(func: Callable) -> Signature:
     sign = signature(func)
-    parameters = list(sign.parameters.values())
+    parameters = [p for p in sign.parameters.values() if p.kind in {
+        Parameter.POSITIONAL_ONLY, Parameter.POSITIONAL_OR_KEYWORD, Parameter.VAR_POSITIONAL}]
 
-    assert all(p.kind in {
-        Parameter.POSITIONAL_ONLY, Parameter.POSITIONAL_OR_KEYWORD, Parameter.VAR_POSITIONAL} for p in parameters), "Functions with keyword parameters are not supported."
-
-    result = Signature(parameters=[], lazy=all(
-        p.annotation == Program for p in parameters))
+    result = Signature(parameters=[],
+                       lazy=all(p.annotation == Program for p in parameters),
+                       eval=any(p.name == EVAL_PARAMETER for p in sign.parameters.values() if p.kind == Parameter.KEYWORD_ONLY))
 
     def infer(p: Parameter):
         assert result.lazy or p.annotation != Program, f"Parameter named '{p.name}' cannot be Program in a non-lazy function, use Program for all parameters."
