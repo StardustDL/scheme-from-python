@@ -22,13 +22,20 @@ class Interpreter:
         print(f"scheme-from-python (sfpy) {__version__}")
         while True:
             try:
-                text = input(">>> ")
+                text = input("> ")
                 while True:
-                    if self.parser.parse(text) is not None:
+                    program = self.parser.nocheck(text)
+                    if program.valid():
                         break
-                    line = input("... ")
+
+                    right = program.missingRight()
+                    line = input(". " + "  " * (right or 0))
+
                     if not line:
+                        # auto fix right parentheses
+                        text += ")" * (right or 0)
                         break
+
                     text += f" {line}"
 
                 result = self.interprete(text)

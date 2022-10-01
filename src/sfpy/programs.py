@@ -10,16 +10,19 @@ class Program(list[Token]):
         else:
             raise TypeError
 
-    def valid(self):
+    def missingRight(self) -> int | None:
         cnt = 0
         for token in self:
             if token == LEFT:
                 cnt += 1
             elif token == RIGHT:
                 if cnt <= 0:
-                    return False
+                    return None
                 cnt -= 1
-        return cnt == 0
+        return cnt
+
+    def valid(self):
+        return self.missingRight() == 0
 
     def combination(self):
         return len(self) > 1 and self[0] == LEFT and self[-1] == RIGHT
