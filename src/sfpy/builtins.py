@@ -43,7 +43,7 @@ def lambdafunc(parameters: Program, body: Program, *, eval: Evaluator):
     assert len(parameters) > 0 and parameters.valid(
     ) and parameters[0] == LEFT, f"Parameter list {parameters} is invalid."
 
-    parameters = parameters[1:-1].split()
+    parameters = parameters.split()
     assert all(
         len(p) == 1 for p in parameters), f"Parameter list {parameters} is invalid."
     assert len(set(p[0] for p in parameters)) == len(

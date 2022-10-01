@@ -22,10 +22,12 @@ class Evaluator:
     def evaluate(self, program: Program) -> Value:
         if not program:
             return EMPTY
-        if program[0] == LEFT:
-            return self.combination(program[1:-1])
-        else:
+        if program.combination():
+            return self.combination(program)
+        elif program.atomic():
             return self.atomic(program)
+        else:
+            return self.sequence(program)
 
     def symbol(self, symbol: str | Symbol, value=None) -> Value:
         symbol = str(symbol)
@@ -69,3 +71,9 @@ class Evaluator:
             operator, Function), f"Operator must be a function: {operator}"
 
         return operator(*[o if operator.signature.lazy else self.evaluate(o) for o in operands], eval=self)
+
+    def sequence(self, program: Program) -> Value:
+        result = EMPTY
+        for sub in program.split():
+            result = self.evaluate(sub)
+        return result

@@ -20,6 +20,8 @@ https://user-images.githubusercontent.com/34736356/193305337-c5a48c83-2d31-4a46-
   - [x] Lazy or non-lazy functions
   - [x] Capturing the evaluation context (symbol table).
 
+> For sequence expression, the value of the last sub-expression is the final value, e.g., `1 2 3` = `3`.
+
 ## Values
 
 - Boolean: `#t` true, `#f` false
