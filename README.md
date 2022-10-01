@@ -18,9 +18,13 @@ https://user-images.githubusercontent.com/34736356/193305337-c5a48c83-2d31-4a46-
 - Interoperation
   - [x] Auto signature inferring from Python to Scheme
   - [x] Lazy or non-lazy functions
-  - [x] Capturing the evaluation context (symbol table).
+  - [x] Capturing the evaluation context (symbol table)
+- Interpreter
+  - [x] File Mode
+  - [x] Expression Mode
+  - [x] Interactor Mode with multi-line support
 
-> For sequence expression, the value of the last sub-expression is the final value, e.g., `1 2 3` = `3`.
+> For sequence expression, the final value is the value of the last sub-expression, e.g., `1 2 3` = `3`.
 
 ## Values
 

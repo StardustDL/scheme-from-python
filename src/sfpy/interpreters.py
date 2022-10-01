@@ -22,8 +22,16 @@ class Interpreter:
         print(f"scheme-from-python (sfpy) {__version__}")
         while True:
             try:
-                line = input(">>> ")
-                result = self.interprete(line)
+                text = input(">>> ")
+                while True:
+                    if self.parser.parse(text) is not None:
+                        break
+                    line = input("... ")
+                    if not line:
+                        break
+                    text += f" {line}"
+
+                result = self.interprete(text)
                 if result != EMPTY:
                     print(result)
             except Exception as ex:
