@@ -15,17 +15,35 @@ https://user-images.githubusercontent.com/34736356/193305337-c5a48c83-2d31-4a46-
   - [x] Boolean operators
   - [x] Arithmetic operators (integer, float, complex)
   - [x] Comparing operators
+  - [x] Input / Output functions
 - Interoperation
   - [x] Auto signature inferring from Python to Scheme
   - [x] Lazy or non-lazy functions
   - [x] Capturing the evaluation context (symbol table)
+  - [x] Call pure Python functions
 - Interpreter
   - [x] File / command-line expression
   - [x] Auto-indented multi-line
   - [x] Auto fixing missing right parentheses
 
-
 > For sequence expression, the final value is the value of the last sub-expression, e.g., `1 2 3` = `3`.
+
+## Python Interoperation
+
+Most static Python functions can be accessed in sfpy, by the qualified name `module:`, `module:attribue` or `module:class.attribue`, e.g., `os:getcwd`, `os.path:split`.
+
+sfpy tries to wrap the Python function to adapt to the scheme environment. Have fun to try this experimental feature!
+
+```
+> sys:version
+3.10.4 | packaged by conda-forge | (main, Mar 30 2022, 08:38:02) [MSC v.1916 64 bit (AMD64)]
+> os:getcwd
+(lambda () (...))
+> (os:getcwd)
+D:\scheme-from-python\src
+> (dir math:)
+Object(['__doc__', '__loader__', '__name__', '__package__', '__spec__', 'acos', 'acosh', 'asin', 'asinh', 'atan', 'atan2', 'atanh', 'ceil', 'comb', 'copysign', 'cos', 'cosh', 'degrees', 'dist', 'e', 'erf', 'erfc', 'exp', 'expm1', 'fabs', 'factorial', 'floor', 'fmod', 'frexp', 'fsum', 'gamma', 'gcd', 'hypot', 'inf', 'isclose', 'isfinite', 'isinf', 'isnan', 'isqrt', 'lcm', 'ldexp', 'lgamma', 'log', 'log10', 'log1p', 'log2', 'modf', 'nan', 'nextafter', 'perm', 'pi', 'pow', 'prod', 'radians', 'remainder', 'sin', 'sinh', 'sqrt', 'tan', 'tanh', 'tau', 'trunc', 'ulp'])
+```
 
 ## Values
 
@@ -34,6 +52,7 @@ https://user-images.githubusercontent.com/34736356/193305337-c5a48c83-2d31-4a46-
 - Float: `0.1`, `1.5`, ...
 - Complex: `1+2j`, `3+4j`, ...
 - Symbol: `a`, `b`, `c`, `+`, `-`, ...
+- String: `a`, `b`, `c`, `+`, `-`, ...
 - Function: `(lambda (x) (+ x 1))`, ...
 - Empty: `<empty>` only as return value
 

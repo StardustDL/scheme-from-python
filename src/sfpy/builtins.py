@@ -4,7 +4,7 @@ from typing import Callable
 from .evaluators import Evaluator
 from .programs import Program
 from .functions import Function, function
-from .values import EMPTY, Int, Number, Value, Symbol
+from .values import EMPTY, Int, Number, Value, String
 from .tokens import LEFT
 
 builtins = {}
@@ -24,8 +24,8 @@ def builtin(name: str):
 def define(name: Program, value: Program, *, eval: Evaluator):
     assert len(name) == 1, "The symbol name must be a single string."
 
-    symbol = Symbol(name[0])
-    assert symbol.valid(), "The symbol name is not valid."
+    symbol = String(name[0])
+    assert symbol.isSymbol(), "The symbol name is not valid."
 
     eval.symbol(symbol, eval.evaluate(value))
 
@@ -49,7 +49,7 @@ def lambdafunc(parameters: Program, body: Program, *, eval: Evaluator):
     assert len(set(p[0] for p in parameters)) == len(
         parameters), "Parameter names contain conflicts."
 
-    parameters: list[Symbol] = [Symbol(p[0]) for p in parameters]
+    parameters: list[String] = [String(p[0]) for p in parameters]
     assert all(s.valid()
                for s in parameters), f"Parameter list {parameters} is invalid."
 
@@ -58,7 +58,7 @@ def lambdafunc(parameters: Program, body: Program, *, eval: Evaluator):
         return eval.sub({str(parameter): argument for parameter, argument in zip(parameters, args)}).evaluate(body)
 
     raw.repr = f"( lambda ( {' '.join(p.raw for p in parameters)} ) {' '.join(body)} )"
-    raw.signature.parameters = [None] * len(parameters)
+    raw.signature.parameters = [(Value, False)] * len(parameters)
 
     return raw
 

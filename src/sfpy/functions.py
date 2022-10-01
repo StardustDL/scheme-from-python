@@ -6,7 +6,7 @@ from inspect import signature, Parameter
 from .tokens import LEFT
 
 from .programs import Program
-from .values import Bool, Int, Symbol, Value
+from .values import Bool, Int, Object, String, Value, allValues
 
 if TYPE_CHECKING:
     from .evaluators import Evaluator
@@ -17,14 +17,14 @@ EVAL_PARAMETER = "eval"
 
 @dataclass
 class Signature:
-    parameters: list[tuple[Type[Value], bool] | None] | None = None
+    parameters: list[tuple[Type[Value], bool]] | None = None
     variadic: tuple[Type[Value], bool] | None = None
     lazy: bool = False
     eval: bool = False
 
     def adapt(self, *args: Value) -> list:
         if self.parameters is None:
-            return
+            return [v.raw if isinstance(v, Object) else v for v in args]
 
         parameters = self.parameters
 
@@ -41,7 +41,7 @@ class Signature:
             for arg in args[len(parameters):]:
                 assert isinstance(
                     arg, target), f"The variadic {i}-th argument must of type {target}, but got {type(arg)}."
-                variadic.append(arg.raw if flat else arg)
+                variadic.append(arg.raw if flat or isinstance(arg, Object) else arg)
 
             args = args[:len(parameters)]
         else:
@@ -50,15 +50,28 @@ class Signature:
 
         result = []
         for i, (parameter, arg) in enumerate(zip(parameters, args)):
-            if parameter is None:
-                result.append(arg)
-                continue
             target, flat = parameter
             assert isinstance(
                 arg, target), f"The {i}-th argument must of type {target}, but got {type(arg)}."
-            result.append(arg.raw if flat else arg)
+            result.append(arg.raw if flat or isinstance(arg, Object) else arg)
 
         return result + variadic
+
+    def __repr__(self) -> str:
+        result = ""
+
+        if self.parameters is None:
+            result += "any"
+        else:
+            items = [t[0].__qualname__ if t else "?" for t in self.parameters]
+            if self.variadic:
+                items.append(f"{self.variadic[0].__qualname__}...")
+            result += ", ".join(items)
+
+        if self.lazy:
+            result += "*"
+
+        return result
 
 
 class Function(Value):
@@ -66,7 +79,7 @@ class Function(Value):
 
     def __init__(self, raw, signature: Signature | None = None, repr: str | None = None) -> None:
         super().__init__(raw)
-        self.signature = signature or Signature()
+        self.signature = signature or inferSignature(raw)
         self.repr = repr
 
     def __call__(self, *args, eval: "Evaluator"):
@@ -75,31 +88,34 @@ class Function(Value):
                      **({EVAL_PARAMETER: eval} if self.signature.lazy and self.signature.eval else {})))
 
     def __repr__(self) -> str:
-        return self.repr if self.repr is not None else super().__repr__()
+        return self.repr if self.repr is not None else f"(lambda ({repr(self.signature)}) (...))"
 
 
 def inferSignature(func: Callable) -> Signature:
-    sign = signature(func)
+    try:
+        sign = signature(func)
+    except:
+        return Signature()
+
     parameters = [p for p in sign.parameters.values() if p.kind in {
         Parameter.POSITIONAL_ONLY, Parameter.POSITIONAL_OR_KEYWORD, Parameter.VAR_POSITIONAL}]
 
     result = Signature(parameters=[],
-                       lazy=all(p.annotation == Program for p in parameters),
+                       lazy=all(p.annotation == Program for p in parameters) and len(
+                           parameters) > 0,
                        eval=any(p.name == EVAL_PARAMETER for p in sign.parameters.values() if p.kind == Parameter.KEYWORD_ONLY))
 
     def infer(p: Parameter):
         assert result.lazy or p.annotation != Program, f"Parameter named '{p.name}' cannot be Program in a non-lazy function, use Program for all parameters."
 
-        if p.annotation in {bool, Bool}:
-            return (Bool, p.annotation != Bool)
-        elif p.annotation in {int, Int}:
-            return (Int, p.annotation != Int)
-        elif p.annotation in {Callable, Function}:
-            return (Function, p.annotation != Function)
-        elif p.annotation == Program:
+        for item in allValues():
+            if p.annotation in {item, item.__rawType__}:
+                return (item, p.annotation == item.__rawType__)
+
+        if p.annotation == Program:
             return (Program, False)
         else:
-            return None
+            return (Value, False)
 
     if len(parameters) > 0 and parameters[-1].kind == Parameter.VAR_POSITIONAL:
         result.variadic = infer(parameters[-1])
@@ -112,4 +128,4 @@ def inferSignature(func: Callable) -> Signature:
 
 
 def function(func: Callable):
-    return Function(func, signature=inferSignature(func))
+    return Function(func)

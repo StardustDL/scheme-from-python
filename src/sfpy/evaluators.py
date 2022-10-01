@@ -4,10 +4,10 @@ from typing import Callable
 from .functions import Function, function
 from .programs import Program
 from .tokens import TRUE as TOKEN_TRUE, FALSE as TOKEN_FALSE, LEFT, RIGHT
-from .values import Complex, Float, Int, Symbol, Value, EMPTY, TRUE as VALUE_TRUE, FALSE as VALUE_FALSE
+from .values import Complex, Float, Int, String, Value, EMPTY, TRUE as VALUE_TRUE, FALSE as VALUE_FALSE
 
 
-def resolvePythonFunction(name: str):
+def resolvePythonAttribute(name: str):
     result = None
 
     if ":" not in name:
@@ -16,11 +16,16 @@ def resolvePythonFunction(name: str):
         module, name = name.split(':', 1)
         try:
             module = importlib.import_module(module)
-            result = getattr(module, name)
+            names = name.split(".")
+            cur = module
+            for n in names:
+                if n:
+                    cur = getattr(cur, n)
+            result = cur
         except:
             result = None
 
-    return result if isinstance(result, Callable) else None
+    return Value.ensure(result) if result is not None else None
 
 
 class Evaluator:
@@ -48,15 +53,15 @@ class Evaluator:
         else:
             return self.sequence(program)
 
-    def symbol(self, symbol: str | Symbol, value=None) -> Value:
+    def symbol(self, symbol: str | String, value=None) -> Value:
         symbol = str(symbol)
         if value == None:
             if self.parent == None:
 
                 if symbol not in self.symbols:  # try resolve python function
-                    pythonFunc = resolvePythonFunction(symbol)
-                    if pythonFunc is not None:
-                        return function(pythonFunc)
+                    pyAttr = resolvePythonAttribute(symbol)
+                    if pyAttr is not None:
+                        return pyAttr
 
                 assert symbol in self.symbols, f"Undefined symbol: '{symbol}'"
             elif symbol not in self.symbols:
@@ -91,7 +96,7 @@ class Evaluator:
         operator, operands = subprograms[0], subprograms[1:]
 
         operator = self.evaluate(operator)
-        if isinstance(operator, Symbol):
+        if isinstance(operator, String):
             operator = self.symbol(operator)
         assert isinstance(
             operator, Function), f"Operator must be a function: {operator}"
