@@ -6,7 +6,10 @@ from typing import Callable
 
 def allValues():
     from .functions import Function
-    return [v for v in globals().values() if inspect.isclass(v) and issubclass(v, Value) and not inspect.isabstract(v) and not ABC in v.__bases__] + [Function]
+    return [v for v in globals().values() if inspect.isclass(v) and issubclass(v, Value)] + [Function]
+
+def allConcreteValues():
+    return [v for v in allValues() if not inspect.isabstract(v) and not ABC in v.__bases__]
 
 
 class Value(ABC):
@@ -31,7 +34,7 @@ class Value(ABC):
     def ensure(cls, raw) -> "Value":
         if isinstance(raw, Value):
             return raw
-        for item in allValues():
+        for item in allConcreteValues():
             if isinstance(raw, item.__rawType__):
                 return item(raw)
         return Object(raw)
