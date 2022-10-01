@@ -40,7 +40,7 @@ def lambdafunc(evaluator: Evaluator):
         assert len(set(p[0] for p in parameters)) == len(
             parameters), "Parameter names contain conflicts."
 
-        parameters = [Symbol(p[0]) for p in parameters]
+        parameters: list[Symbol] = [Symbol(p[0]) for p in parameters]
         assert all(s.valid()
                    for s in parameters), f"Parameter list {parameters} is invalid."
 

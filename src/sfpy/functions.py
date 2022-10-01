@@ -104,4 +104,4 @@ def inferSignature(func: Callable) -> Signature:
 
 
 def function(func: Callable):
-    return Function(func, signature=inferSignature(func), repr=repr)
+    return Function(func, signature=inferSignature(func))

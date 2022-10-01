@@ -18,16 +18,18 @@ class Evaluator:
         self.symbols: dict[str, Value] = {}
 
         if self.parent is None:
-            from .core import define, branch, lambdafunc
-            cdefine = define(self)
-            cbranch = branch(self)
-            clambda = lambdafunc(self)
-            self.symbols.update({
-                **builtins,
-                **{name: cdefine for name in CORE_DEFINE},
-                **{name: cbranch for name in CORE_BRANCH},
-                **{name: clambda for name in CORE_LAMBDA},
-            })
+            self.symbols.update(builtins)
+
+        from .core import define, branch, lambdafunc
+        cdefine = define(self)
+        cbranch = branch(self)
+        clambda = lambdafunc(self)
+        self.symbols.update({
+            **builtins,
+            **{name: cdefine for name in CORE_DEFINE},
+            **{name: cbranch for name in CORE_BRANCH},
+            **{name: clambda for name in CORE_LAMBDA},
+        })
 
     def sub(self, symbols: dict[str, Value] | None = None) -> "Evaluator":
         sub = Evaluator(self)
@@ -84,6 +86,8 @@ class Evaluator:
         operator, operands = subprograms[0], subprograms[1:]
 
         operator = self.evaluate(operator)
+        if isinstance(operator, Symbol):
+            operator = self.symbol(operator)
         assert isinstance(
             operator, Function), f"Operator must be a function: {operator}"
 

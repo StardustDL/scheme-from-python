@@ -130,4 +130,8 @@ python -m sfpy
 python -m sfpy -f your_scheme_file
 
 python -m sfpy -e "your scheme expression"
+
+python -m sfpy -f ./demo/arithmetic.scm
+python -m sfpy -f ./demo/lambda.scm
+python -m sfpy -f ./demo/factorial.scm
 ```

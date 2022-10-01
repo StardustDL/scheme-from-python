@@ -71,3 +71,6 @@ jobs:
       - name: Lambda
         run: |
           python -m sfpy -f ./demo/lambda.scm
+      - name: Recurse
+        run: |
+          python -m sfpy -f ./demo/factorial.scm
