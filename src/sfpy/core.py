@@ -38,10 +38,14 @@ def lambdafunc(evaluator: Evaluator):
         ) and parameters[0] == LEFT, f"Parameter list {parameters} is invalid."
 
         parameters = parameters[1:-1].split()
-        assert all(len(p) == 1 for p in parameters), f"Parameter list {parameters} is invalid."
+        assert all(
+            len(p) == 1 for p in parameters), f"Parameter list {parameters} is invalid."
+        assert len(set(p[0] for p in parameters)) == len(
+            parameters), "Parameter names contain conflicts."
 
         parameters = [Symbol(p[0]) for p in parameters]
-        assert all(s.valid() for s in parameters), f"Parameter list {parameters} is invalid."
+        assert all(s.valid()
+                   for s in parameters), f"Parameter list {parameters} is invalid."
 
         @function(count=len(parameters), repr=f"( lambda ( {' '.join(p.raw for p in parameters)} ) {' '.join(body)} )")
         def raw(*args):

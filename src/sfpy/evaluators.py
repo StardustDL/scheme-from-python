@@ -29,8 +29,15 @@ class Evaluator:
                 **{name: clambda for name in CORE_LAMBDA},
             })
 
-    def sub(self) -> "Evaluator":
-        return Evaluator(self)
+    def sub(self, symbols: dict[str, Value] | None = None) -> "Evaluator":
+        sub = Evaluator(self)
+        from .core import lambdafunc
+        clambda = lambdafunc(sub)
+        sub.symbols.update({
+            **(symbols or {}),
+            **{name: clambda for name in CORE_LAMBDA},
+        })
+        return sub
 
     def evaluate(self, program: Program) -> Value:
         if not program:
