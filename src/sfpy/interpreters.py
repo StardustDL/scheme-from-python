@@ -1,14 +1,14 @@
-from sfpy.evaluators import Evaluator
-from sfpy.exceptions import InvalidInput
-from sfpy.values import EMPTY, Value
-from .parsers import Parser
+from .exceptions import InvalidInput
+from .values import EMPTY, Value
 from . import __version__
 
 
 class Interpreter:
     def __init__(self) -> None:
+        from .parsers import Parser
+        from .evaluators import Evaluator
         self.parser = Parser()
-        self.evaluator = Evaluator()
+        self.evaluator = Evaluator(interpreter=self)
 
     def interprete(self, text: str) -> Value:
         program = self.parser.parse(text)
@@ -39,6 +39,7 @@ class Interpreter:
                     text += f" {line}"
 
                 result = self.interprete(text)
+                self.evaluator.symbol("_", result)
                 if result != EMPTY:
                     print(result)
             except Exception as ex:

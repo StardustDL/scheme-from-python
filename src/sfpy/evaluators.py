@@ -1,10 +1,13 @@
 import builtins
 import importlib
-from typing import Callable
+from typing import TYPE_CHECKING, Callable
 from .functions import Function, function
 from .programs import Program
 from .tokens import TRUE as TOKEN_TRUE, FALSE as TOKEN_FALSE, LEFT, RIGHT
 from .values import Complex, Float, Int, String, Value, EMPTY, TRUE as VALUE_TRUE, FALSE as VALUE_FALSE
+
+if TYPE_CHECKING:
+    from .interpreters import Interpreter
 
 
 def resolvePythonAttribute(name: str):
@@ -27,8 +30,9 @@ def resolvePythonAttribute(name: str):
 
 
 class Evaluator:
-    def __init__(self, parent: "Evaluator | None" = None) -> None:
+    def __init__(self, parent: "Evaluator | None" = None, interpreter: "Interpreter | None" = None) -> None:
         self.parent = parent
+        self.interpreter = interpreter
         self.symbols: dict[str, Value] = {}
 
         if self.parent is None:
@@ -36,7 +40,7 @@ class Evaluator:
             self.symbols.update(builtins)
 
     def sub(self, symbols: dict[str, Value] | None = None) -> "Evaluator":
-        sub = Evaluator(self)
+        sub = Evaluator(self, self.interpreter)
         if symbols:
             sub.symbols.update(symbols)
         return sub
@@ -66,6 +70,7 @@ class Evaluator:
             return self.symbols[symbol]
         else:
             self.symbols[symbol] = value
+            return value
 
     def atomic(self, program: Program) -> Value:
         assert len(

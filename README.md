@@ -84,7 +84,7 @@ Undefined symbol: x
 
 **`(macro (p1 p2 ... pn) body_expression)`**
 
-Macro expression, define a macro, for text replacement, with the parameters named `p1`, `p2`, ..., `pn` (can be empty, i.e., `()`), and the macro body, `mac` for a short alternative, no capturing context.
+Macro expression, define a macro, for text replacement with the parameters named `p1`, `p2`, ..., `pn` (can be empty, i.e., `()`), and the macro body, `mac` for a short alternative, no capturing context.
 
 ### Boolean
 
@@ -172,6 +172,14 @@ $$=\textbf{boolean}(v_1 \ne v_2)$$
 
 Print the value and return empty.
 
+**`(from filePath)`**
+
+Interprete a source file and return the evaluated value.
+
+**`(symbols)`**
+
+Return all symbols in the current context, `syms` for a short alternative.
+
 ## Install
 
 ```sh
@@ -190,6 +198,8 @@ sfpy supports interactor (for user input) and interpreter (for file input) mode.
 ```sh
 python -m sfpy
 ```
+
+- Use `_` to access last value.
 
 ### Interpreter Mode
 

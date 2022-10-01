@@ -1,5 +1,8 @@
 from functools import wraps, reduce
+from pathlib import Path
 from typing import Callable
+
+from .exceptions import InvalidInput
 
 from .evaluators import Evaluator
 from .programs import Program
@@ -85,6 +88,24 @@ def macro(parameters: Program, body: Program):  # do not capture macro creation 
     raw.signature.parameters = [(Program, False)] * len(parameters)
 
     return raw
+
+
+@builtin("from")
+def fromFile(file: Program, *, eval: Evaluator):
+    assert len(file) == 1, "Only one file can be provided."
+    file: Path = Path(file[0])
+    assert file.exists() and file.is_file(), f"File '{file}' not found."
+    assert eval.interpreter is not None, "No interpreter found."
+    text = file.read_text()
+    program = eval.interpreter.parser.parse(text)
+    assert program is not None, InvalidInput(text)
+    return eval.evaluate(program)
+
+
+@builtin("syms")
+@builtin("symbols")
+def symbols(*, eval: Evaluator):
+    return eval.symbols
 
 
 @builtin("+")

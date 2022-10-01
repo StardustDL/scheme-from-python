@@ -41,7 +41,8 @@ class Signature:
             for arg in args[len(parameters):]:
                 assert isinstance(
                     arg, target), f"The variadic {i}-th argument must of type {target}, but got {type(arg)}."
-                variadic.append(arg.raw if flat or isinstance(arg, Object) else arg)
+                variadic.append(
+                    arg.raw if flat or isinstance(arg, Object) else arg)
 
             args = args[:len(parameters)]
         else:
@@ -104,6 +105,8 @@ def inferSignature(func: Callable) -> Signature:
                        lazy=all(p.annotation == Program for p in parameters) and len(
                            parameters) > 0,
                        eval=any(p.name == EVAL_PARAMETER for p in sign.parameters.values() if p.kind == Parameter.KEYWORD_ONLY))
+    if result.eval and len(parameters) == 0:
+        result.lazy = True
 
     def infer(p: Parameter):
         assert result.lazy or p.annotation != Program, f"Parameter named '{p.name}' cannot be Program in a non-lazy function, use Program for all parameters."
