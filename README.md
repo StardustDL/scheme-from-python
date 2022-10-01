@@ -1,6 +1,9 @@
-# scheme-from-python
+# ![scheme-from-python](https://socialify.git.ci/StardustDL/scheme-from-python/image?description=1&font=Bitter&forks=1&issues=1&language=1&owner=1&pulls=1&stargazers=1&theme=Light "scheme-from-python")
 
-An experimental scheme interpreter in Python.
+[![](https://github.com/StardustDL/scheme-from-python/workflows/CI/badge.svg)](https://github.com/StardustDL/scheme-from-python/actions) [![](https://img.shields.io/github/license/StardustDL/scheme-from-python.svg)](https://github.com/StardustDL/coxbuild/blob/master/LICENSE)
+<!--[![](https://img.shields.io/pypi/v/scheme-from-python)](https://pypi.org/project/scheme-from-python/) [![Downloads](https://pepy.tech/badge/scheme-from-python?style=flat)](https://pepy.tech/project/scheme-from-python)-->
+
+[scheme-from-python](https://github.com/StardustDL/scheme-from-python) is an experimental scheme interpreter in Python.
 
 https://user-images.githubusercontent.com/34736356/193305337-c5a48c83-2d31-4a46-9ff8-370619967530.mov
 
@@ -9,8 +12,9 @@ https://user-images.githubusercontent.com/34736356/193305337-c5a48c83-2d31-4a46-
   - [x] if
   - [x] lambda (with closures)
 - Builtin functions
-  - [x] Arithmetic operators for integers
-  - [x] Comparing operators for numbers
+  - [x] Boolean operators
+  - [x] Integer arithmetic operators
+  - [x] Comparing operators
 - Interoperation
   - [x] Auto signature inferring from Python to Scheme
 
@@ -36,6 +40,20 @@ Branch expression, if `predicate_expression` is not `#f`, then evaluate and retu
 **`(lambda (p1 p2 ... pn) body_expression`**
 
 Lambda expresion, define an anonymous function (closure) with the parameters named `p1`, `p2`, ..., `pn` (can be empty, i.e., `()`), and the function body, `lam` for a short alternative.
+
+### Boolean
+
+**`(not b)`**
+
+$$=\neg b$$
+
+**`(and b1 b2 ... bn)`** *without short circuit*
+
+$$=\bigwedge_{i=1}^n b_i$$
+
+**`(or b1 b2 ... bn)`** *without short circuit*
+
+$$=\bigvee_{i=1}^n b_i$$
 
 ### Arithmetic
 

@@ -72,11 +72,29 @@ def greaterEq(v1: int, v2: int):
 
 @builtins.name("=")
 @function
-def equal(v1: int, v2: int):
+def equal(v1: Value, v2: Value):
     return v1 == v2
 
 
 @builtins.name("!=")
 @function
-def notEq(v1: int, v2: int):
+def notEq(v1: Value, v2: Value):
     return v1 != v2
+
+
+@builtins.name("not")
+@function
+def boolNot(b: bool):
+    return not b
+
+
+@builtins.name("and")
+@function
+def boolAnd(b1: bool, b2: bool, *args: bool):
+    return all([b1, b2, *args])
+
+
+@builtins.name("or")
+@function
+def boolOr(b1: bool, b2: bool, *args: bool):
+    return any([b1, b2, *args])
