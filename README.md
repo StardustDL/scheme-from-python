@@ -11,6 +11,7 @@ https://user-images.githubusercontent.com/34736356/193305337-c5a48c83-2d31-4a46-
   - [x] define
   - [x] if
   - [x] lambda (with closures)
+  - [x] macro (without capturing context)
 - Builtin functions
   - [x] Boolean operators
   - [x] Arithmetic operators (integer, float, complex)
@@ -62,7 +63,7 @@ Object(['__doc__', '__loader__', '__name__', '__package__', '__spec__', 'acos', 
 
 **`(define symbol_name value_expression)`**
 
-Define a symbol with exact value, and return the symbol, `def` for a short alternative.
+Define a symbol with exact value, and return the value, `def` for a short alternative.
 
 **`(if predicate_expression true_expression false_expresion)`**
 
@@ -80,6 +81,10 @@ x
 >>> x
 Undefined symbol: x
 ```
+
+**`(macro (p1 p2 ... pn) body_expression)`**
+
+Macro expression, define a macro, for text replacement, with the parameters named `p1`, `p2`, ..., `pn` (can be empty, i.e., `()`), and the macro body, `mac` for a short alternative, no capturing context.
 
 ### Boolean
 

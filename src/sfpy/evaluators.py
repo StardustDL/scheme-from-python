@@ -95,8 +95,6 @@ class Evaluator:
         operator, operands = subprograms[0], subprograms[1:]
 
         operator = self.evaluate(operator)
-        if isinstance(operator, String):
-            operator = self.symbol(operator)
         assert isinstance(
             operator, Function), f"Operator must be a function: {operator}"
 

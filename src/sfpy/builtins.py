@@ -27,9 +27,10 @@ def define(name: Program, value: Program, *, eval: Evaluator):
     symbol = String(name[0])
     assert symbol.isSymbol(), "The symbol name is not valid."
 
-    eval.symbol(symbol, eval.evaluate(value))
+    value = eval.evaluate(value)
+    eval.symbol(symbol, value)
 
-    return symbol
+    return value
 
 
 @builtin("if")
@@ -37,9 +38,7 @@ def branch(predicate: Program, exprTrue: Program, exprFalse: Program, *, eval: E
     return eval.evaluate(exprTrue if eval.evaluate(predicate) else exprFalse)
 
 
-@builtin("lam")
-@builtin("lambda")
-def lambdafunc(parameters: Program, body: Program, *, eval: Evaluator):
+def getParameterList(parameters: Program) -> list[String]:
     assert len(parameters) > 0 and parameters.valid(
     ) and parameters[0] == LEFT, f"Parameter list {parameters} is invalid."
 
@@ -53,12 +52,37 @@ def lambdafunc(parameters: Program, body: Program, *, eval: Evaluator):
     assert all(s.isSymbol()
                for s in parameters), f"Parameter list {parameters} is invalid."
 
+    return parameters
+
+
+@builtin("lam")
+@builtin("lambda")
+def lambdafunc(parameters: Program, body: Program, *, eval: Evaluator):
+    parameters = getParameterList(parameters)
+
     @function
     def raw(*args):
         return eval.sub({str(parameter): argument for parameter, argument in zip(parameters, args)}).evaluate(body)
 
     raw.repr = f"( lambda ( {' '.join(p.raw for p in parameters)} ) {' '.join(body)} )"
     raw.signature.parameters = [(Value, False)] * len(parameters)
+
+    return raw
+
+
+@builtin("mac")
+@builtin("macro")
+def macro(parameters: Program, body: Program):  # do not capture macro creation environment
+    parameters = getParameterList(parameters)
+
+    @function
+    def raw(*args: Program, eval: Evaluator):
+        mp = {str(parameter): argument for parameter,
+              argument in zip(parameters, args)}
+        return eval.evaluate(Program(sum((mp.get(str(token), [token]) for token in body), [])))
+
+    raw.repr = f"( macro ( {' '.join(p.raw for p in parameters)} ) {' '.join(body)} )"
+    raw.signature.parameters = [(Program, False)] * len(parameters)
 
     return raw
 
